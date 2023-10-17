@@ -335,4 +335,62 @@ function totalFunction(a: string, func1: (b: string) => string, func2: funcType2
   return result2;
 }
 
-totalFunction('010-1111-22222', cutZero, removeDash);;
+totalFunction('010-1111-22222', cutZero, removeDash);
+
+class Person2 {
+  name: string;
+  age: number;
+  constructor(name: string, age: number) {
+    this.name = name;
+    this.age = age;
+  }
+
+  // 클래스 내부에는 함수를 입력할 수 있다. 이 함수는 Person2 라는 클래스의 prototype에 추가된다.
+  add(num: number): number {
+    return num + 1;
+  }
+}
+
+class Car {
+  model: string;
+  price: number;
+  constructor(model: string, price: number) {
+    this.model = model;
+    this.price = price;
+  }
+
+  tax(): number {
+    return this.price * 0.1;
+  }
+}
+
+class Word {
+  num: number[] = [];
+  str: string[] = [];
+  constructor(...param: (number | string)[]) {
+    param.forEach((item) => {
+      if(typeof item === 'string') {
+        this.str.push(item)
+      } else {
+        this.num.push(item)
+      }
+    })
+
+  }
+}
+
+// interface
+interface Square2 {
+  color: string,
+  width: number,
+}
+
+let Square3: Square2 = { color : 'red', width : 100 }
+
+interface Student {
+  name: string
+}
+
+interface Teacher extends Student {
+  age: number
+}
