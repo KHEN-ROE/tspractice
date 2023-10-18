@@ -453,3 +453,114 @@ interface FuncObj {
   plus: (a: number, b: number) => number,
   minus: (a: number, b: number) => number,
 }
+
+// rest 파라미터 - 함수에 어떤 파라미터가 몇개 들어올 지 미리 정의가 불가능한 경우에 사용
+function sumAll(...num: number[]) { // ...사용해서 rest 파라미터 정의
+  console.log(num);
+}
+sumAll(1, 2, 3, 4, 5)
+// rest 파라미터는 다른 일반 파라미터 뒤에만 올 수 있다. rest 파라미터 자리에 집어넣은 값을은 전부 []안에 담겨있다.
+// 따라서 타입 지정 또한 array처럼 해주면 됨.
+
+// 주의할 점 = 스프레드 연산자와 다르다.
+// 스프레드 연산자 - array or object 괄호 벗기고 싶을 때 왼쪽에 사용
+// 여러 개의 파라미터를 의미하는 ...rest는 함수선언 할 때 소괄호 안에서 사용
+let arr3 = [3, 4, 5];
+let arr4 = [1, 2, ...arr3];
+
+// Destructuring 문법
+// 자바스크립트에서 array, object 안에 있는 데이터를 빼서 변수로 만들고 싶을 때 쓰는 문법.
+let man1 = { student: true, age: 20 };
+let student1 = man1.student;
+let age1 = man1.age;
+// 위와 같이 써도 되는데, Destructuring을 사용하면 변수로 빠르고 쉽게 뺄 수 있다.
+let { student3, age3 } = { student3: true, age3: 20 };
+
+// object도 가능
+let [a, b] = ['안녕', 100];
+
+// 함수 파라미터에도 적용
+let person = { student: true, age: 20 };
+
+function testDestructuring({ student: boolean, age: Number }) {
+  console.log(student1, age);
+}
+testDestructuring({ student: true, age: 20 });
+
+// 숫자를 여러 개 쓰면 최댓값을 리턴하는 함수
+function calcMax(...num: number[]): number {
+  let max = 0;
+  for (let i = 0; i < num.length; i++) {
+    if (num[i] > max) {
+      max = num[i];
+    }
+  }
+  return max;
+}
+
+// object 자료를 파라미터로 입력할 수 있는 함수
+type UserType = {
+  user: string,
+  comment2: number[],
+  admin2: boolean,
+}
+
+function testFunc({ user, comment2, admin2 }: { user: string, comment2: number[], admin2: boolean }): void {
+  console.log(user, comment2, admin2);
+}
+testFunc({ user: 'kim', comment2: [3, 5, 4], admin2: false })
+
+// array 자료를 파라미터로 받는 함수
+type MyArr = (number | string | boolean)[];
+
+function testFunc2([a, b, c]: MyArr) {
+  console.log(a, b, c);
+}
+
+// && - falsy
+let 변수:string = "";
+let strs:string = "";
+if (변수 && typeof strs === "string") {
+  // 변수가 undefined라면 if문이 실행되지 않는다.
+}
+
+function printAll(strs: string | undefined) {
+  if (strs && typeof strs === "string") {
+
+  }
+}
+
+// in 연산자로 object 자료 narrowing
+type Fish = {swim: string};
+type Bird = {fly: string};
+
+function testFunc3(animal: Fish | Bird) {
+  if("swim" in animal) {
+    return animal.swim;
+  }
+  return animal.fly;
+}
+
+// class로부터 생산된 object라면 instanof 로 narrowing
+let date = new Date();
+if(date instanceof Date) { // instanceof로 부모 클래스가 누군지 검사 가능
+  console.log("true");
+}
+
+// literal type이 있으면 narrowing이 쉽다.
+type Car2 = {
+  wheel : "4개",
+  color : string,
+}
+type Bike = {
+  wheel : '2개',
+  color : string,
+}
+
+function testFunc4(x: Car2 | Bike) {
+  if(x.wheel === "4개") {
+    console.log('this car is ' + x.color);
+  } else {
+    console.log('this bike is ' + x.color);
+  }
+}
