@@ -369,7 +369,7 @@ class Word {
   str: string[] = [];
   constructor(...param: (number | string)[]) {
     param.forEach((item) => {
-      if(typeof item === 'string') {
+      if (typeof item === 'string') {
         this.str.push(item)
       } else {
         this.num.push(item)
@@ -385,7 +385,7 @@ interface Square2 {
   width: number,
 }
 
-let Square3: Square2 = { color : 'red', width : 100 }
+let Square3: Square2 = { color: 'red', width: 100 }
 
 interface Student {
   name: string
@@ -393,4 +393,63 @@ interface Student {
 
 interface Teacher extends Student {
   age: number
+}
+
+// 인터페이스와 type aliass의 차이점 - extends 문법이 약간 다르다.
+// 인터페이스는 extends, type alias는 &(intersection) 기호 사용하여 object 두 개 합칠 수 있다.
+type Animal {
+  name: string
+}
+type Cat = Animal & { legs: number }
+
+// 근데 인터페이스도 type처럼 & 기호 사용 가능
+let sum: Student & Teacher = { name: 'kim', age: 90 }
+
+// 인터페이스는 타입이름 중복선언 허용 = 중복 시 extends 한 것과 동일하게 동작
+// 장점 - type 선언을 자주 쓰는 외부 라이브러리 이용시 타입 선언을 내가 덮어쓰고 오버라이드하기 편함
+interface Animals {
+  legs: string
+}
+
+interface Animals {
+  name: string
+}
+
+// type alias의 경우 중복 선언 불허
+// 그래서 일반적인 상황에서는 type 키워드 자주 활용. 다른 사람이 내 코드를 이용하는 상황이 많으면 interface로 유연하게 만드는 게 좋다.
+// 그래서 타입스크립트로 작성된 라이브러리들은 interface로 타입정해놓은 곳이 많다.
+// 혹은 object 자료형은 전부 인터페이스로 만들고 다른 자료형은 type 키워드로 만드는 것도 괜찮다.
+interface Product {
+  brand: string,
+  serialNumber: number,
+  model: string[],
+}
+
+// 예제
+let goods: Product = { brand: 'Samsung', serialNumber: 1360, model: ['TV', 'phone'] }
+
+interface Product2 {
+  product: string,
+  price: number,
+}
+
+let wishList: Product2[] = [{ product: '청소기', price: 7000 }, { product: '삼다수', price: 800 }]
+
+interface card extends Product2 {
+  card: boolean
+}
+
+// 예제
+let myobj: FuncObj = {
+  plus: (a: number, b: number) => {
+    return a + b;
+  },
+  minus(a: number, b: number) {
+    return a - b;
+  }
+}
+
+interface FuncObj {
+  plus: (a: number, b: number) => number,
+  minus: (a: number, b: number) => number,
 }
