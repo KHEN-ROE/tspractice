@@ -518,8 +518,8 @@ function testFunc2([a, b, c]: MyArr) {
 }
 
 // && - falsy
-let 변수:string = "";
-let strs:string = "";
+let 변수: string = "";
+let strs: string = "";
 if (변수 && typeof strs === "string") {
   // 변수가 undefined라면 if문이 실행되지 않는다.
 }
@@ -531,11 +531,11 @@ function printAll(strs: string | undefined) {
 }
 
 // in 연산자로 object 자료 narrowing
-type Fish = {swim: string};
-type Bird = {fly: string};
+type Fish = { swim: string };
+type Bird = { fly: string };
 
 function testFunc3(animal: Fish | Bird) {
-  if("swim" in animal) {
+  if ("swim" in animal) {
     return animal.swim;
   }
   return animal.fly;
@@ -543,24 +543,281 @@ function testFunc3(animal: Fish | Bird) {
 
 // class로부터 생산된 object라면 instanof 로 narrowing
 let date = new Date();
-if(date instanceof Date) { // instanceof로 부모 클래스가 누군지 검사 가능
+if (date instanceof Date) { // instanceof로 부모 클래스가 누군지 검사 가능
   console.log("true");
 }
 
 // literal type이 있으면 narrowing이 쉽다.
 type Car2 = {
-  wheel : "4개",
-  color : string,
+  wheel: "4개",
+  color: string,
 }
 type Bike = {
-  wheel : '2개',
-  color : string,
+  wheel: '2개',
+  color: string,
 }
 
 function testFunc4(x: Car2 | Bike) {
-  if(x.wheel === "4개") {
+  if (x.wheel === "4개") {
     console.log('this car is ' + x.color);
   } else {
     console.log('this bike is ' + x.color);
   }
 }
+
+//Never type = 함수의 return타입으로 사용 가능. 근데 잘 안씀
+function testFunc5(): never {
+  // 절대 return을 하지 말아야함.
+  // 함수 실행이 끝나지 않아야 함(endPoint가 없어야 함).
+  while (true) {
+    console.log(123); // 무한히 실행되는 코드만 작성가능
+  }
+}
+
+function testFunc6(): never {
+  throw new Error('에러');
+}
+
+function testFunc7(param: string) {
+  if (typeof param == 'string') {
+    param + 1;
+  } else {
+    param; // 잘못된 코드다. param은 string 밖에 못오기 때문. 따라서 이런 잘못된 코드에 never가 오니까, never가 뜨면 수정하면 됨.
+  }
+}
+
+// 함수를 만드는 2가지 방법(함수 선언문, 함수 표현식)
+function testFunc8() {
+  // 함수 선언문 - 아무 것도 리턴하지 않으면 void타입 자동 리턴
+  throw new Error();
+}
+
+let testFunc9 = function () {
+  // 함수 표현식 - 아무 것도 리턴하지 않으면 never타입 자동 리턴
+  throw new Error();
+}
+
+// public, private
+// class 안에서 public, private 키워드 사용가능
+// 사실 public은 선언 안 해도 기본값. 자바의 default처럼.
+// private은 해당 클래스 내에서만 수정가능.
+
+// private 부여된 속성을 class 밖에서 수정해야할 경우? 자바의 게터세터와 같다.
+class User {
+  public name: string;
+  private familyName: string;
+
+  constructor() {
+    this.name = 'kim';
+    let hello = this.familyName + 'hi';
+  }
+  getFamilyName(): string {
+    return this.familyName;
+  }
+
+  setFamilyName(familyName: string) {
+    this.familyName = this.familyName;
+  }
+
+
+}
+let user1 = new User();
+user1.getFamilyName();
+
+// public쓰면 생성자에서 this.name = name 이런거 생략가능.
+
+class People {
+  name: string;
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+let person1 = new Person('john');
+
+class People2 {
+  constructor(public name: string) {
+
+  }
+}
+let person2 = new People2('john');
+
+// protected의 경우 private과 비슷하지만 extends된 class 안에서 사용할 수 있음.
+class People3 {
+  protected x = 10;
+}
+
+class NewUser extends People3 {
+  doThis() {
+    this.x = 20;
+  }
+}
+
+// static - 객체 생성 없이 바로 사용가능
+// extends로 class 복사할 경우 static 또한 따라옴
+// class 안에 메모를 하거나, 기본 설정값을 입력하거나, class로부터 생성되는 object가 사용할 필요가 없는 변수들을 만들고 싶을 때 사용
+class People4 {
+  static x = 10;
+  y = 20;
+}
+People4.x = 20;
+
+// 예제
+class People5 {
+  private static x = 10;
+  public static y = 20;
+
+  public static addOne(num: number): number {
+    return this.x += num;
+  }
+
+  public static printX() {
+    console.log(this.x);
+  }
+
+}
+People5.addOne(3);
+People5.printX();
+
+// <div> 박스를 무작위로 만드는 클래스.
+class Square4 {
+  x: number;
+  y: number;
+  color: string;
+
+  constructor(x: number, y: number, color: string) {
+    this.x = x;
+    this.y = y;
+    this.color = color;
+  }
+
+  draw() {
+    let a = Math.random();
+    let square = `<div style="position:relative;
+    top:${a * 400}px;
+    left:${a * 400}px;
+    width:${this.x}px;
+    height:${this.y}px;
+    background:${this.color}"></div>`;
+    document.body.insertAdjacentHTML('beforeend', square);
+  }
+}
+
+let mySquare = new Square4(30, 30, 'red');
+mySquare.draw();
+mySquare.draw();
+mySquare.draw();
+mySquare.draw();
+
+// 타입변수를 다른 파일에서 사용하고 싶은 경우 import, export 가능.
+//a.ts
+export let userName9 = 'kim';
+export let userAge = 30;
+export type UserName10 = string | boolean;
+export type UserAge2 = (a: number) => number;
+
+//b.ts
+// import (userName9, UserName10, userAge, UserAge2) from './a'
+let username11: UserName10 = 'kim';
+let testFunc10: UserAge2 = (a) => { return a + 10 };
+
+// 예제
+export type Car3 = {
+  wheel: number,
+  model: string,
+}
+
+export interface Bike2 {
+  wheel: 2,
+  model: string
+}
+
+export type ObjFunction = (a?: object) => voidl
+
+// namespace
+namespace GoodDog {
+  export type Dog = string;
+}
+namespace BadDog {
+  export interface Dog { name: string };
+}
+
+let dog1: GoodDog.Dog = 'bard';
+let dog2: BadDog.Dog = { name: 'paw' }
+
+// 함수 return 값의 타입이 애매하다면? Generic
+// 제네릭 적용한 함수만들기
+// <>안에 파라미터를 또 입력가능, 근데 여기에는 타입만 입력 가능(타입 파라미터 문법).
+function myFunc4<T>(x: T[]): T {
+  return x[0];
+}
+// 제네릭을 쓰면 임의로 정한 타입을 RETURN 값으로 뱉는 함수를 제작할 수 있다.
+let a1 = myFunc4<number>([4,2]) // 여기서 <>는 안써도 됨
+let b1 = myFunc4<string>(['kim', 'park']);
+
+// 제네릭 타입 제한하기(constraints)
+// extends 문법을 쓰면 넣을 수 있는 타입 제한 가능.
+// 인터페이스 문법에 쓰는 extends와 좀 다름. 그거는 상속 인데 이거는 if문으로 체크하는 문법.
+function myFunc5<T extends number>(x: T) {
+  return x - 1;
+}
+let a2 = myFunc5<number>(2);
+
+// 커스텀 타입도 extends 가능
+interface lengthCheck {
+  length: number;
+}
+function myFunc6<T extends lengthCheck>(x: T) {
+  return x.length;
+}
+
+let a3 = myFunc6<string>('sdasd');
+
+// 예제
+function count2<T>(param: T) {
+  if(typeof param === 'string') {
+    return param.length;
+  } else if (Array.isArray(param)) {
+    let count = 0;
+    for(let i = 0; i< param.length; i++) {
+      count++;
+    }
+    return count;
+  }
+} // 이게 narrowing
+
+// constraint
+function count3<T extends string | string[]>(x: T) {
+  console.log(x.length);
+}
+
+count2<string>('kim');
+count3<string[]>(['asd','asd']);
+
+// 두 함수의 차이? 제네릭은 number의 하위타입인 리터럴 타입 가질 수 있ㄷ다.
+function myFunc7<T extends number>(x: T) {
+  return x - 1;
+}
+function myFunc8(x: number) {
+  return x - 1;
+}
+// 주요 차이점
+type MyNumber = 5;
+
+const result1 = myFunc7<MyNumber>(5);  // 첫 번째 함수 호출, 결과의 타입은 MyNumber가 된다.
+const result2 = myFunc8(5);  // 두 번째 함수 호출, 결과의 타입은 number
+
+
+// 예제2 JSON 자료를 object{} 자료로 변환해서 리턴하는 함수
+interface Animal2 {
+  name: string,
+  age: number,
+}
+let data2 = '{"name" : "dog", "age" : 1}'
+
+function jsonParser<T>(param: string): T { // 파라미터는 string으로 받는데, 리턴타입이 불확실해서 제네릭 쓰는 경우인가? 
+                                          // 어쨌든 파라미터 타입은 string으로 정해져있네.
+  return JSON.parse(param)
+}
+let result = jsonParser<Animal2>(data2)
+console.log(result);
+
