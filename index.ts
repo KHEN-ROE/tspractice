@@ -1,3 +1,6 @@
+// 타입스크립틀를 쓰는 이유?
+// 프로젝트 사이즈가 큰 경우, 협업 시 다른 사람이 짠 코드를 참조할 일이 많은 경우, 장기적으로 유지보수에 도움이 되는지 여부, 나중에  팀원이 더 필요해도 인력수급이 쉽게 가능한 경우, 팀원들 학습에 필요한 시간과 비용이 적게 드는 경우
+
 let username: string = 'kim';
 let username2: string | number = 'kim';
 
@@ -820,4 +823,14 @@ function jsonParser<T>(param: string): T { // 파라미터는 string으로 받�
 }
 let result = jsonParser<Animal2>(data2)
 console.log(result);
+
+// 예제 - 클래스에 제네릭 적용
+class People6<T> {
+  name: T;
+  constructor(name: T) {
+    this.name = name;
+  }
+}
+let a4 = new Person('kim');
+a4.name;
 
