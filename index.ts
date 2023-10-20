@@ -754,7 +754,7 @@ function myFunc4<T>(x: T[]): T {
   return x[0];
 }
 // 제네릭을 쓰면 임의로 정한 타입을 RETURN 값으로 뱉는 함수를 제작할 수 있다.
-let a1 = myFunc4<number>([4,2]) // 여기서 <>는 안써도 됨
+let a1 = myFunc4<number>([4, 2]) // 여기서 <>는 안써도 됨
 let b1 = myFunc4<string>(['kim', 'park']);
 
 // 제네릭 타입 제한하기(constraints)
@@ -777,11 +777,11 @@ let a3 = myFunc6<string>('sdasd');
 
 // 예제
 function count2<T>(param: T) {
-  if(typeof param === 'string') {
+  if (typeof param === 'string') {
     return param.length;
   } else if (Array.isArray(param)) {
     let count = 0;
-    for(let i = 0; i< param.length; i++) {
+    for (let i = 0; i < param.length; i++) {
       count++;
     }
     return count;
@@ -794,7 +794,7 @@ function count3<T extends string | string[]>(x: T) {
 }
 
 count2<string>('kim');
-count3<string[]>(['asd','asd']);
+count3<string[]>(['asd', 'asd']);
 
 // 두 함수의 차이? 제네릭은 number의 하위타입인 리터럴 타입 가질 수 있ㄷ다.
 function myFunc7<T extends number>(x: T) {
@@ -818,7 +818,7 @@ interface Animal2 {
 let data2 = '{"name" : "dog", "age" : 1}'
 
 function jsonParser<T>(param: string): T { // 파라미터는 string으로 받는데, 리턴타입이 불확실해서 제네릭 쓰는 경우인가? 
-                                          // 어쨌든 파라미터 타입은 string으로 정해져있네.
+  // 어쨌든 파라미터 타입은 string으로 정해져있네.
   return JSON.parse(param)
 }
 let result = jsonParser<Animal2>(data2)
@@ -834,3 +834,226 @@ class People6<T> {
 let a4 = new Person('kim');
 a4.name;
 
+// Tuple 타입 - array에 붙일 수 있는 타입으로서 자료의 위치까지 정확히 지정 가능.
+let dog3: [string, boolean]; // [] 안에 타입을 적으면 됨
+dog3 = ['dog', true];
+
+// Tuple 응용: rest parameter
+function myFunc9(...x: [string, number]) { //파라미터 왼쪽에 점 3개 붙이면 rest parameter(파라미터가 몇 개 들어올지 모를 때 사용). 이걸 튜플 이용해서 타입지정 가능.
+  // rest parameter 쓰면 파라미터가 전부 array에 담겨온다.
+  console.log(x);
+}
+
+// tuple 안에도 옵션 가능
+type Num = [number, number?, number?];
+type Num2 = [number, number?, number]; // 이건 안 됨. 논리적으로 이상함. ?옵션기호는 뒤에만 붙일 수 있다.
+
+let arr5 = [1, 2, 3];
+let arr6: [number, number, ...number[]] = [4, 5, ...arr5];
+
+// 예제1
+let food: [string, number, boolean];
+food = ['구내식당', 6000, true];
+
+// 예제2
+let arr7: [string, number, ...boolean[]]
+arr7 = ['동서녹차', 4000, true, false, true, true, false, true]
+
+// 예제3 함수에 타입지정
+function myFunc10(...a: [string, boolean, ...(number | string)[]]) {
+
+}
+myFunc10('a', true, 6, 'a', 10, 10);
+
+function myFunc11(a: string, b: number): [...string[], ...number[]] {
+  let str: string[] = [];
+  let num: number[] = [];
+  let result: [...string[], ...number[]] = [];
+
+  str.push(a);
+  num.push(b);
+  result.push(a)
+  result.push(b)
+  return result;
+}
+
+// js파일 -> ts파일로 변수를 가져다 쓰고 싶으면 import export 하면됨
+// import {a} from './data'
+
+declare let a5: number; // declare 쓰면 이미 정의된 변수나 함수를 재정의할 수 있다. a5라는 변수를 이 파일에서 잠깐 정의하겠다는 뜻(a5라는 변수는 어딘가에 있으니까 에러내지 말라는 뜻) 
+// declare로 정의한 내용은 js로 변환되지 않는다.
+// 그래서 자바스크립트로만 작성된 외부 라이브러리들을 쓸 때도 유용함.
+// 근데 tsconfig.json안에 allowJs 옵션을 켜두면 js파일도 타입 지정이 알아서 implicit하게 됨.
+
+// Ambient Module - import export 없이 타입들을 다른 파일에서 가져다쓸 수 있는 기능(같은 폴더 안에  있는 경우).
+// ts  파일ㄹ에 입력한  변수와  타입들은 전부 global  변수 취급하기 때문
+// 전역으로 쓸 수 있는 파일을 ambient module이라고 함.
+let man2: myAge11 = 30;
+
+// 반면 import, export 키워드가 들어간 ts파일은 다르다. 두 키워드 중 하나만 있으면 그 파일은 로컬 모듈이 됨. 거기 있는 모든 변수는  export 해줘야 다른 파일에서 사용가능.
+// 따라서 타입스크립트 파일ㄹ이 다른 파일에 영향끼치는 걸 막교 싶으면 export 키워드 강제로 추가하면 됨
+
+
+// implements
+interface CarType {
+  model: string,
+  price: number,
+}
+
+// class 이름 우측에 implements로 인터페이스를 구현하면 이 class가 이 인터페이스에 있는 속성을 다 들고 있는지 확인가능
+class CarInfo implements CarType {
+  model: string;
+  price: number = 1000;
+  constructor(model: string) {
+    this.model = model;
+  }
+}
+let myCar = new CarInfo('morning');
+
+
+// index signatures = object 자료에 타입을 미리 만들어주고 싶은데, object 자료에 어떤 속성들이 들어올 수 있는지 아직 모르는 경우, 타입지정할 속성이 너무 많은 경우 사용
+
+interface StringOnly {
+  [key: string]: string
+}
+
+let obj5: StringOnly = {
+  name: 'kim',
+  age: '20',
+  location: 'Seoul',
+}
+
+// array 형태도 가능
+interface StringOnly2 {
+  [key: number]: string,
+}
+
+let obj6: StringOnly2 = {
+  0: 'kim',
+  1: '20',
+  2: 'seoul'
+}
+
+interface MyType3 {
+  'font-size': MyType3 | number
+}
+
+let obj7: MyType3 = {
+  'font-size': {
+    'font-size': {
+      'font-size': 14
+    }
+  }
+}
+
+interface MyType4 {
+  [key: string]: string | number
+}
+
+let obj8 = {
+  model: 'k5',
+  brand: 'kia',
+  price: 6000,
+  year: 2020,
+  date: '6월',
+  percent: '5%',
+  dealer: '김차장',
+}
+
+interface MyType5 {
+  'font-size': number,
+  [key: string]: MyType5 | number,
+}
+
+let obj9:MyType5 = {
+  'font-size' : 10,
+  'secondary' : {
+    'font-size' : 12,
+    'third' : {
+      'font-size' : 14
+    }
+  }
+}
+
+// 가끔 object를 다른 타입으로 변환하고 싶을 때? mapping 이용
+// keyof 연산자 - object 타입이 가지고 있는 모든 key값을 union type으로 합쳐서 내보내줌.
+// object의 key를 뽑아서 새롱운 타입으로 만들고 싶을 때 사용하는 연산자.
+interface People7 {
+  age: number,
+  name: string,
+}
+type PeopleKeys = keyof People7; // age, name 타입이 됨.
+let a6: PeopleKeys = 'age'; // 가능
+// let b6: PeopleKeys = 'ageeee'; // 불가능
+
+interface People8 {
+  [key: string]: number;
+}
+type PeopleKeys2 = keyof People8; // string | number
+let a7: PeopleKeys2 = 'age'; // 가능
+let b7: PeopleKeys2 = 'ageeee' // 가능
+
+// object 안의 속성들의 타입을 싸그리 바꾸고 싶을 때
+type CarInfo2 = {
+  color: boolean,
+  model: boolean,
+  price: boolean | number,
+}
+
+type TypeChanger <newType> = {
+  [key in keyof newType]: string;
+}
+
+type newType = TypeChanger<CarInfo2>;
+
+let obj10: newType = {
+  color: 'red',
+  model: 'kia',
+  price: '300',
+}
+
+// 예제
+type Bus = {
+  color: string,
+  model: boolean,
+  price: string,
+}
+
+type TypeChanger2 <newType2> = {
+  [key in keyof newType2]: string | number;
+}
+
+type newType2 = TypeChanger2<Bus>;
+
+let obj11: newType2 = {
+  color: 'blue',
+  model: 'HYUNDAI',
+  price: 2000
+}
+
+// 삼항 연산
+type Age2<T> = T extends string? string : unknown;
+let age4: Age2<String>; // string
+let age5: Age2<number>; // unknown
+
+// 파라미터가 array면 array 자료의 타입 반환, 아니면 any 타입 반환
+type FirstItem<T> = T extends any[] ? T[0] : any 
+
+let age6: FirstItem<string[]>
+let age7: FirstItem<number>
+
+// infer 키워드
+type Person3<T> = T extends infer R ? R : unknown;
+type newType3 = Person3<string> 
+
+// infer 키워드는 조건문 안에서만 사용가능.
+// infer 우측에 자유롭게 작명해주면 타입을 T에서 유추해서 R이라는 변수에 집어넣어라는 뜻. 위에서 R은 string이 됨.
+// R을 조건식 안에서 사용 가능
+// 즉 infer는 타입파라미터에서 타입을 추출해서 쓰고 싶을 때 쓰는 키워드.
+// 용도 - 1. array 안에 있던 타입이 어떤 타입인지 뽑아서 변수로 만들 수 있음.
+type ext<T> = T extends (infer R)[] ? R : unknown;
+type NewType4 = ext< boolean[] >
+
+// 2. 함수의 returnn 타입이 어떤 타입인지 뽑아서 변수로 만들 수 있다.
+type ext2<T> = T extends (() => infer R) ? R : unknown;
+type NewType5 = ext< () => number>
