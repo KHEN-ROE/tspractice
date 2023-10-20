@@ -203,3 +203,5 @@ function totalFunction(a, func1, func2) {
 }
 totalFunction('010-1111-22222', cutZero, removeDash);
 ;
+
+conso
